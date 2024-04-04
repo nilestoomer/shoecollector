@@ -19,6 +19,18 @@ class ShoeDetail(generics.RetrieveUpdateDestroyAPIView):
   serializer_class = ShoeSerializer
   lookup_field = 'id'
 
+  def retrieve(self, request, *args, **kwargs):
+    instance = self.get_object()
+    serializer = self.get_serializer(instance)
+
+    socks_not_associated = Sock.objects.exclude(id__in=instance.socks.all())
+    socks_serializer = SockSerializer(socks_not_associated, many=True)
+
+    return Response({
+      'shoe': serializer.data,
+      'socks_not_associated': socks_serializer.data
+    })
+
 class WearListCreate(generics.ListCreateAPIView):
   serializer_class = WearSerializer
 
@@ -47,3 +59,10 @@ class SockDetail(generics.RetrieveUpdateDestroyAPIView):
   queryset = Sock.objects.all()
   serializer_class = SockSerializer
   lookup_field = 'id'
+
+class AddSockToShoe(APIView):
+  def post(self, request, shoe_id, sock_id):
+    shoe = Shoe.objects.get(id=shoe_id)
+    sock = Sock.objects.get(id=sock_id)
+    shoe.socks.add(sock)
+    return Response({'message': f'Sock {sock.color} added to Shoe {shoe.name}'})
