@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics
-from .models import Shoe, Wear
-from .serializers import ShoeSerializer, WearSerializer
+from .models import Shoe, Wear, Sock
+from .serializers import ShoeSerializer, WearSerializer, SockSerializer
 
 # Define the home view
 class Home(APIView):
@@ -38,3 +38,12 @@ class WearDetail(generics.RetrieveUpdateDestroyAPIView):
   def get_queryset(self):
     shoe_id = self.kwargs['shoe_id']
     return Wear.objects.filter(shoe_id=shoe_id)
+  
+class SockList(generics.ListCreateAPIView):
+  queryset = Sock.objects.all()
+  serializer_class = SockSerializer
+
+class SockDetail(generics.RetrieveUpdateDestroyAPIView):
+  queryset = Sock.objects.all()
+  serializer_class = SockSerializer
+  lookup_field = 'id'

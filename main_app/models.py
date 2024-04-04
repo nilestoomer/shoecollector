@@ -28,3 +28,10 @@ class Wear(models.Model):
     
     class Meta:
         ordering = ['-date']
+
+class Sock(models.Model):
+    color = models.CharField(max_length=20)
+    type = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.color
